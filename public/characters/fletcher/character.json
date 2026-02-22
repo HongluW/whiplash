@@ -1,0 +1,9 @@
+{
+  "id": "fletcher",
+  "displayName": "Fletcher",
+  "description": "Caucasian middle-aged male, fully bald, wears black.",
+  "metadata": "metadata.json",
+  "sprites": {
+    "rotations": "rotations/"
+  }
+}
