@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { setScaleFit } from '../utils/scaleHelper.js';
 
 export class BootScene extends Phaser.Scene {
   constructor() {
@@ -31,24 +32,14 @@ export class BootScene extends Phaser.Scene {
       loadingText.destroy();
     });
 
-    // Placeholder assets — replace with real sprites later
-    // Generate a simple colored rectangle as the player texture
-    const playerGraphics = this.make.graphics({ x: 0, y: 0, add: false });
-    playerGraphics.fillStyle(0x4fc3f7);
-    playerGraphics.fillRect(0, 0, 32, 48);
-    playerGraphics.generateTexture('player', 32, 48);
-    playerGraphics.destroy();
-
-    const tileGraphics = this.make.graphics({ x: 0, y: 0, add: false });
-    tileGraphics.fillStyle(0x3a5f3a);
-    tileGraphics.fillRect(0, 0, 32, 32);
-    tileGraphics.lineStyle(1, 0x2a4f2a);
-    tileGraphics.strokeRect(0, 0, 32, 32);
-    tileGraphics.generateTexture('grass', 32, 32);
-    tileGraphics.destroy();
+    // Backgrounds
+    this.load.image('background', '/Generated Image February 21, 2026 - 10_46PM.jpeg');
+    this.load.image('backgroundPixelLab', '/pixellab-Here-s-the-refined-prompt---Su-1771743129652.png');
   }
 
   create() {
+    setScaleFit(this);
     this.scene.start('TitleScene');
   }
+
 }

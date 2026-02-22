@@ -5,5 +5,15 @@
   "metadata": "metadata.json",
   "sprites": {
     "rotations": "rotations/"
+  },
+  "animations": {
+    "breathing-idle": {
+      "name": "idle breathing",
+      "frames": "animations/breathing-idle/"
+    },
+    "throw-object": {
+      "name": "throwing",
+      "frames": "animations/throw-object/"
+    }
   }
 }

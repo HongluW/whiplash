@@ -1,18 +1,25 @@
 import Phaser from 'phaser';
-import { GAME_WIDTH, GAME_HEIGHT } from '../config/gameConfig.js';
+import { setScaleFullWidth } from '../utils/scaleHelper.js';
 
-export class GameScene extends Phaser.Scene {
+/**
+ * Main game scene — Pixel Lab background.
+ * Full-width canvas.
+ */
+export class GameScene2 extends Phaser.Scene {
   constructor() {
-    super({ key: 'GameScene' });
+    super({ key: 'GameScene2' });
   }
 
   create() {
+    setScaleFullWidth(this);
+    const w = this.scale.width;
+    const h = this.scale.height;
     // Black base — entire frame; any uncovered areas stay black
-    this.add.rectangle(0, 0, GAME_WIDTH, GAME_HEIGHT, 0x000000).setOrigin(0);
+    this.add.rectangle(0, 0, w, h, 0x000000).setOrigin(0);
 
-    // Background — fully visible, no crop, no squashing; scale down only if larger than frame
-    const bg = this.add.image(GAME_WIDTH / 2, GAME_HEIGHT / 2, 'background');
-    const scale = Math.min(GAME_WIDTH / bg.width, GAME_HEIGHT / bg.height, 1);
+    // Background — Pixel Lab image
+    const bg = this.add.image(w / 2, h / 2, 'backgroundPixelLab');
+    const scale = Math.min(w / bg.width, h / bg.height, 1);
     bg.setScale(scale);
 
     // UI text
@@ -35,22 +42,19 @@ export class GameScene extends Phaser.Scene {
 
   togglePause() {
     this.paused = !this.paused;
-
-    if (this.paused) {
-      this.showPauseOverlay();
-    } else {
-      this.hidePauseOverlay();
-    }
+    if (this.paused) this.showPauseOverlay();
+    else this.hidePauseOverlay();
   }
 
   showPauseOverlay() {
     if (this.pauseOverlay) return;
-
-    const cx = GAME_WIDTH / 2;
-    const cy = GAME_HEIGHT / 2;
+    const w = this.scale.width;
+    const h = this.scale.height;
+    const cx = w / 2;
+    const cy = h / 2;
 
     const overlay = this.add
-      .rectangle(0, 0, GAME_WIDTH, GAME_HEIGHT, 0x000000, 0.7)
+      .rectangle(0, 0, w, h, 0x000000, 0.7)
       .setOrigin(0)
       .setScrollFactor(0)
       .setDepth(900)
@@ -77,16 +81,7 @@ export class GameScene extends Phaser.Scene {
       .setScrollFactor(0)
       .setDepth(901)
       .setInteractive({ useHandCursor: true });
-
-    const resumeText = this.add
-      .text(cx, btnY - 35, 'RESUME', {
-        fontFamily: 'monospace',
-        fontSize: '20px',
-        color: '#4fc3f7',
-      })
-      .setOrigin(0.5)
-      .setScrollFactor(0)
-      .setDepth(902);
+    const resumeText = this.add.text(cx, btnY - 35, 'RESUME', { fontFamily: 'monospace', fontSize: '20px', color: '#4fc3f7' }).setOrigin(0.5).setScrollFactor(0).setDepth(902);
 
     const exitBg = this.add
       .rectangle(cx, btnY + 35, btnW, btnH, 0x1a1a3a)
@@ -94,29 +89,12 @@ export class GameScene extends Phaser.Scene {
       .setScrollFactor(0)
       .setDepth(901)
       .setInteractive({ useHandCursor: true });
+    const exitText = this.add.text(cx, btnY + 35, 'EXIT TO TITLE', { fontFamily: 'monospace', fontSize: '20px', color: '#4fc3f7' }).setOrigin(0.5).setScrollFactor(0).setDepth(902);
 
-    const exitText = this.add
-      .text(cx, btnY + 35, 'EXIT TO TITLE', {
-        fontFamily: 'monospace',
-        fontSize: '20px',
-        color: '#4fc3f7',
-      })
-      .setOrigin(0.5)
-      .setScrollFactor(0)
-      .setDepth(902);
-
-    const addHover = (bg, text) => {
-      bg.on('pointerover', () => {
-        bg.setFillStyle(0x2a2a5a);
-        text.setColor('#a8d8f0');
-      });
-      bg.on('pointerout', () => {
-        bg.setFillStyle(0x1a1a3a);
-        text.setColor('#4fc3f7');
-      });
-    };
-    addHover(resumeBg, resumeText);
-    addHover(exitBg, exitText);
+    resumeBg.on('pointerover', () => { resumeBg.setFillStyle(0x2a2a5a); resumeText.setColor('#a8d8f0'); });
+    resumeBg.on('pointerout', () => { resumeBg.setFillStyle(0x1a1a3a); resumeText.setColor('#4fc3f7'); });
+    exitBg.on('pointerover', () => { exitBg.setFillStyle(0x2a2a5a); exitText.setColor('#a8d8f0'); });
+    exitBg.on('pointerout', () => { exitBg.setFillStyle(0x1a1a3a); exitText.setColor('#4fc3f7'); });
 
     resumeBg.on('pointerdown', () => this.togglePause());
     exitBg.on('pointerdown', () => this.scene.start('TitleScene'));
@@ -126,8 +104,7 @@ export class GameScene extends Phaser.Scene {
 
   hidePauseOverlay() {
     if (!this.pauseOverlay) return;
-    const { overlay, title, resumeBg, resumeText, exitBg, exitText } = this.pauseOverlay;
-    [overlay, title, resumeBg, resumeText, exitBg, exitText].forEach((g) => g.destroy());
+    Object.values(this.pauseOverlay).forEach((g) => g.destroy());
     this.pauseOverlay = null;
   }
 
@@ -135,7 +112,5 @@ export class GameScene extends Phaser.Scene {
     this.input.keyboard.off('keydown-ESC', this.escListener);
   }
 
-  update() {
-    // No player movement — background only
-  }
+  update() {}
 }

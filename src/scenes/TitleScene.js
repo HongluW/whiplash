@@ -1,6 +1,6 @@
 import Phaser from 'phaser';
-import { GAME_WIDTH, GAME_HEIGHT } from '../config/gameConfig.js';
 import { QTEManager } from '../systems/QTEManager.js';
+import { setScaleFit } from '../utils/scaleHelper.js';
 
 export class TitleScene extends Phaser.Scene {
   constructor() {
@@ -8,11 +8,14 @@ export class TitleScene extends Phaser.Scene {
   }
 
   create() {
+    setScaleFit(this);
     this.qte = new QTEManager(this);
-    const cx = GAME_WIDTH / 2;
+    const w = this.scale.width;
+    const h = this.scale.height;
+    const cx = w / 2;
 
     // Dark background
-    this.add.rectangle(0, 0, GAME_WIDTH, GAME_HEIGHT, 0x0d0d1a).setOrigin(0);
+    this.add.rectangle(0, 0, w, h, 0x0d0d1a).setOrigin(0);
 
     // ── Big title block ──────────────────────────────────────────────
     const titleBlockH = 110;
@@ -97,10 +100,10 @@ export class TitleScene extends Phaser.Scene {
       keyLabel: 'SPACE',
       prompt: 'Press SPACE to begin!',
       duration: 2000,
-      onSuccess: () => this.scene.start('GameScene'),
+      onSuccess: () => this.scene.start('GameScene2'),
       onFail: () => {
         const msg = this.add
-          .text(GAME_WIDTH / 2, GAME_HEIGHT / 2 + 80, 'Too slow! Try again.', {
+          .text(this.scale.width / 2, this.scale.height / 2 + 80, 'Too slow! Try again.', {
             fontFamily: 'monospace',
             fontSize: '18px',
             color: '#f44336',
